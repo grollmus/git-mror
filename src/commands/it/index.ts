@@ -1,8 +1,8 @@
-import {Command, Flags} from '@oclif/core'
+import {CliUx, Command, Flags} from '@oclif/core'
 import {tmpdir} from 'node:os'
-import {mkdir} from 'node:fs'
-import {join} from 'node:path'
+import path = require('node:path')
 import simpleGit from 'simple-git'
+import {prepareWorkingDirectory} from '../../lib/file-system-helper'
 import {isValidRepoUrl} from '../../lib/repository-helper'
 
 export default class It extends Command {
@@ -35,6 +35,7 @@ export default class It extends Command {
 
     const trimedSource = flags.source.trim()
     const trimedDestination = flags.destination.trim()
+    const trimedWorkingDirectory = flags.workingdirectory?.trim()
 
     if (trimedSource === trimedDestination)
       this.error('Source and destination are equal, they must be different.')
@@ -43,16 +44,15 @@ export default class It extends Command {
     else if (!isValidRepoUrl(trimedDestination))
       this.error('Destination is not an valid repository url.')
 
-    this.log(tmpdir())
+    const workingDirectories = await prepareWorkingDirectory(
+      trimedWorkingDirectory ?? path.join(tmpdir(), this.config.name),
+    )
 
-    mkdir(join(tmpdir(), 'mror'), (err) => {
-      if (err) {
-        return console.error(err)
-      }
-
-      this.log(`Tempfolder created: ${tmpdir}/mror`)
-    })
-
-    // simpleGit().clone(trimedSource, tmpdir())
+    CliUx.ux.action.start('clone source repository')
+    await simpleGit().clone(
+      trimedSource,
+      workingDirectories.sourceRepoDirectory,
+    )
+    CliUx.ux.action.stop('✔')
   }
 }
