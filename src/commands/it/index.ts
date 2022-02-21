@@ -1,5 +1,6 @@
 import {CliUx, Command, Flags} from '@oclif/core'
 import {tmpdir} from 'node:os'
+import {join} from 'node:path'
 import path = require('node:path')
 import simpleGit from 'simple-git'
 import {prepareWorkingDirectory} from '../../lib/file-system-helper'
@@ -49,10 +50,25 @@ export default class It extends Command {
     )
 
     CliUx.ux.action.start('clone source repository')
-    await simpleGit().clone(
-      trimedSource,
-      workingDirectories.sourceRepoDirectory,
+    const sourceRepository = await simpleGit(
+      join(workingDirectories.basePath, workingDirectories.sourceRepoDirectory),
     )
+    await sourceRepository.clone(trimedSource, './')
+    CliUx.ux.action.stop('✔')
+
+    CliUx.ux.action.start('clone source repository')
+    const branch = await sourceRepository.branch()
+    const allBranches = branch.all
+    this.log('branch:', branch)
+    CliUx.ux.action.stop('✔')
+
+    CliUx.ux.action.start('clone destination repository')
+    const destinationRepository = await simpleGit(
+      join(
+        workingDirectories.basePath,
+        workingDirectories.destinationRepoDirectory,
+      ),
+    ).clone(trimedDestination, './')
     CliUx.ux.action.stop('✔')
   }
 }
