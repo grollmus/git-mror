@@ -1,5 +1,5 @@
 export interface WorkingDirectories {
-  workingDirectory: string
+  basePath: string
   sourceRepoDirectory: string
   destinationRepoDirectory: string
 }

@@ -4,6 +4,9 @@ import {join} from 'node:path'
 import {WorkingDirectories} from './interfaces/working-directories.interface'
 import {CliUx} from '@oclif/core'
 
+const SOURCE_DIR_NAME = 'source-repo'
+const DESTINATION_DIR_NAME = 'destination-repo'
+
 export const prepareWorkingDirectory = (
   workingDirectory: string,
 ): WorkingDirectories => {
@@ -12,12 +15,13 @@ export const prepareWorkingDirectory = (
   if (!existsSync(workingDirectory)) mkdirSync(workingDirectory)
   if (readdirSync(workingDirectory).length > 0) emptyDirSync(workingDirectory)
 
-  const sourceRepoDirectory = join(workingDirectory, 'source-repo')
-  const destinationRepoDirectory = join(workingDirectory, 'destination-repo')
-
-  mkdirSync(sourceRepoDirectory)
-  mkdirSync(destinationRepoDirectory)
+  mkdirSync(join(workingDirectory, SOURCE_DIR_NAME))
+  mkdirSync(join(workingDirectory, DESTINATION_DIR_NAME))
 
   CliUx.ux.action.stop('✔')
-  return {workingDirectory, sourceRepoDirectory, destinationRepoDirectory}
+  return {
+    basePath: workingDirectory,
+    sourceRepoDirectory: SOURCE_DIR_NAME,
+    destinationRepoDirectory: DESTINATION_DIR_NAME,
+  }
 }
