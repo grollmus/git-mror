@@ -3,8 +3,8 @@ import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import path = require('node:path')
 import simpleGit from 'simple-git'
-import {prepareWorkingDirectory} from '../../lib/file-system-helper'
-import {isValidRepoUrl} from '../../lib/repository-helper'
+import {prepareWorkingDirectory} from '../../lib/file-system.helper'
+import {isValidRepoUrl} from '../../lib/repository.helper'
 
 export default class It extends Command {
   static description = 'Mirror an repository'
