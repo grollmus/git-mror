@@ -3,8 +3,10 @@ import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import path = require('node:path')
 import simpleGit from 'simple-git'
+import DestinationRepo from '../../lib/destination-repo.class'
 import {prepareWorkingDirectory} from '../../lib/file-system.helper'
 import {isValidRepoUrl} from '../../lib/repository.helper'
+import SourceRepo from '../../lib/source-repo.class'
 
 export default class It extends Command {
   static description = 'Mirror an repository'
@@ -49,26 +51,24 @@ export default class It extends Command {
       trimedWorkingDirectory ?? path.join(tmpdir(), this.config.name),
     )
 
-    CliUx.ux.action.start('clone source repository')
-    const sourceRepository = await simpleGit(
-      join(workingDirectories.basePath, workingDirectories.sourceRepoDirectory),
-    )
-    await sourceRepository.clone(trimedSource, './')
-    CliUx.ux.action.stop('✔')
+    const sourceRepo = new SourceRepo({
+      repoUrl: trimedSource,
+      workingDirectory: join(
+        workingDirectories.basePath,
+        workingDirectories.sourceRepoDirectory,
+      ),
+    })
 
-    CliUx.ux.action.start('clone source repository')
-    const branch = await sourceRepository.branch()
-    const allBranches = branch.all
-    this.log('branch:', branch)
-    CliUx.ux.action.stop('✔')
+    await sourceRepo.init()
 
-    CliUx.ux.action.start('clone destination repository')
-    const destinationRepository = await simpleGit(
-      join(
+    const destinationRepo = new DestinationRepo({
+      repoUrl: trimedDestination,
+      workingDirectory: join(
         workingDirectories.basePath,
         workingDirectories.destinationRepoDirectory,
       ),
-    ).clone(trimedDestination, './')
-    CliUx.ux.action.stop('✔')
+    })
+
+    await destinationRepo.init()
   }
 }
