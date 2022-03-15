@@ -1,4 +1,4 @@
-import {CliUx, Command, Flags} from '@oclif/core'
+import {Command, Flags} from '@oclif/core'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import path = require('node:path')
