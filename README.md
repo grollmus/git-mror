@@ -35,7 +35,7 @@ USAGE
 |---|---|:-:|---|
 | -d | --destination | ✔️ | Destination repository |
 | -s | --source | ✔️ | Source repository |
-| -w | --workingdire | ✖️ | Custom working directory. Default: System temp folder. |
+| -w | --workingdirectory | ✖️ | Custom working directory. Default: System temp folder. |
 <!-- commandstop -->
 
 ## Development
