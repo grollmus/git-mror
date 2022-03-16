@@ -59,7 +59,7 @@ export default class It extends Command {
       ),
     })
 
-    await sourceRepo.init(['--depth', '1'])
+    await sourceRepo.init(['--depth', '1', '--no-single-branch'])
 
     const destinationRepo = new DestinationRepo({
       repoUrl: trimedDestination,
@@ -72,11 +72,10 @@ export default class It extends Command {
     await destinationRepo.init()
 
     const allSourceBranches = await sourceRepo.getBranches()
-    console.log('allSourceBranches', allSourceBranches)
     const branchCount = allSourceBranches.length
 
-    for (const [index, branch] of allSourceBranches) {
-      this.log(`Branch ${index} from ${branchCount}`)
+    for (const [index, branch] of allSourceBranches.entries()) {
+      this.log(`Branch ${index+1} from ${branchCount}`)
       console.log('branch', branch)
     }
   }

@@ -5,9 +5,6 @@ export default class SourceRepo extends Repo {
   targetName = 'source'
 
   async getBranches(): Promise<string[]> {
-    CliUx.ux.action.start('fetch all remote branches')
-    await this.repo.fetch(['--all'])
-    CliUx.ux.action.stop('✔')
-    return (await this.repo.branch()).all
+    return (await this.repo.branch(['-r'])).all
   }
 }
