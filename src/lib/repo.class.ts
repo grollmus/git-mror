@@ -1,5 +1,5 @@
-import {CliUx} from '@oclif/core'
-import simpleGit, {SimpleGit} from 'simple-git'
+import {CliUx, Errors} from '@oclif/core'
+import simpleGit, {Options, SimpleGit, TaskOptions} from 'simple-git'
 
 interface RepoInit {
   repoUrl: string
@@ -19,13 +19,15 @@ export default abstract class Repo {
     this.workingDirectory = args.workingDirectory
   }
 
-  async init() {
+  async init(cloneOptions?: TaskOptions<Options>) {
     CliUx.ux.action.start(`setup ${this.targetName} working directory`)
     this.repo = simpleGit(this.workingDirectory)
     CliUx.ux.action.stop('✔')
 
     CliUx.ux.action.start(`clone ${this.targetName} repository`)
-    await this.repo.clone(this.repoUrl, './')
+    await this.repo.clone(this.repoUrl, './', cloneOptions, error => {
+      if (error) Errors.error(error)
+    })
     this.isCloned = true
     CliUx.ux.action.stop('✔')
   }

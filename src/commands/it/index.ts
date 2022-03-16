@@ -59,7 +59,7 @@ export default class It extends Command {
       ),
     })
 
-    await sourceRepo.init()
+    await sourceRepo.init(['--depth', '1'])
 
     const destinationRepo = new DestinationRepo({
       repoUrl: trimedDestination,
