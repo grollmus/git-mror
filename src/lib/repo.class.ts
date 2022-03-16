@@ -9,8 +9,8 @@ interface RepoInit {
 export default abstract class Repo {
   targetName!: string
   isCloned = false
+  repo!: SimpleGit
 
-  private repo!: SimpleGit
   private repoUrl: string
   private workingDirectory: string
 

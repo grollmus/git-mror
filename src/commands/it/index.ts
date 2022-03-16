@@ -70,5 +70,13 @@ export default class It extends Command {
     })
 
     await destinationRepo.init()
+
+    const allSourceBranches = await sourceRepo.getBranches()
+    const branchCount = allSourceBranches.length
+
+    for (const [index, branch] of allSourceBranches) {
+      this.log(`Branch ${index} from ${branchCount}`)
+      console.log('branch', branch)
+    }
   }
 }
