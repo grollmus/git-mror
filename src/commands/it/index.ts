@@ -76,7 +76,7 @@ export default class It extends Command {
 
     for (const [index, branch] of allSourceBranches.entries()) {
       this.log(`Branch ${index+1} from ${branchCount}`)
-      console.log('branch', branch)
+      console.log( branch)
     }
   }
 }
