@@ -1,3 +1,5 @@
+# Tool is still in development
+
 # mror
 
 Mirror your repository to an empty repository without history, included with all branches.
