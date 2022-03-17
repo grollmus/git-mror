@@ -75,8 +75,8 @@ export default class It extends Command {
     const branchCount = allSourceBranches.length
 
     for (const [index, branch] of allSourceBranches.entries()) {
-      this.log(`Branch ${index+1} from ${branchCount}`)
-      console.log( branch)
+      this.log(`[${branch}] Branch ${index + 1} of ${branchCount}`)
+      sourceRepo.checkoutBranch(branch.source)
     }
   }
 }

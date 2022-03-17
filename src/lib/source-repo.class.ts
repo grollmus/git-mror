@@ -1,17 +1,23 @@
-import {CliUx} from '@oclif/core'
+import {CliUx, Errors} from '@oclif/core'
 import Repo from './repo.class'
-import { removeOriginPath } from './string.helper'
+import {removeOriginPath} from './string.helper'
 
 interface BranchMergeList {
   source: string
-  destination: string 
+  destination: string
 }
 
 export default class SourceRepo extends Repo {
   targetName = 'source'
 
-  clone(branchName: string) {
-    this.repo.checkoutBranch(branchName)
+  async checkoutBranch(branchName: string): Promise<void> {
+    const currentBranch = (await this.repo.branch()).current
+    try {
+      this.repo.checkoutBranch(branchName, currentBranch)
+    } catch (error: unknown) {
+      const err = error as Error
+      Errors.error(err)
+    }
   }
 
   async getBranches(): Promise<BranchMergeList[]> {
@@ -20,6 +26,9 @@ export default class SourceRepo extends Repo {
   }
 
   private generateBranchMergeList(branches: string[]): BranchMergeList[] {
-    return branches.map(branch => ({source: branch, destination: removeOriginPath(branch)}))
+    return branches.map(branch => ({
+      source: branch,
+      destination: removeOriginPath(branch),
+    }))
   }
 }
