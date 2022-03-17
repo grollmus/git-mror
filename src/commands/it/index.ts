@@ -1,4 +1,4 @@
-import {Command, Flags} from '@oclif/core'
+import {CliUx, Command, Flags} from '@oclif/core'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import path = require('node:path')
@@ -75,9 +75,14 @@ export default class It extends Command {
     const branchCount = allSourceBranches.length
 
     for (const [index, branch] of allSourceBranches.entries()) {
-      this.log(`[${branch}] Branch ${index + 1} of ${branchCount}`)
+      CliUx.ux.action.start(
+        `[${index + 1} of ${branchCount}] do the magic with '${
+          branch.destination
+        }'`,
+      )
       sourceRepo.checkoutBranch(branch.source)
       destinationRepo.checkoutLocalBranch(branch.destination)
+      CliUx.ux.action.stop('✔')
     }
   }
 }
