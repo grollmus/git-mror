@@ -1,4 +1,6 @@
 import {CliUx, Errors} from '@oclif/core'
+import {copyFileSync} from 'fs-extra'
+import {glob} from 'glob'
 import Repo from './repo.class'
 import {removeOriginPath} from './string.helper'
 
@@ -10,13 +12,31 @@ interface BranchMergeList {
 export default class SourceRepo extends Repo {
   targetName = 'source'
 
+  async copyTo(destinationPath: string) {
+    CliUx.ux.log(`copyTo() ${destinationPath}`)
+    glob.sync(
+      `${this.workingDirectory}/**/*`,
+      {ignore: '.git'}).map(
+       (file: string) => {
+          const fileToCopy = typeof file === 'string' ? file : ''
+          const destinationToCopy = fileToCopy.replace(
+            this.workingDirectory,
+            destinationPath,
+          )
+          CliUx.ux.log(`From: ${fileToCopy}`)
+          CliUx.ux.log(`To: ${destinationToCopy}`)
+          copyFileSync(fileToCopy, destinationToCopy)
+        
+      },
+    )
+  }
+
   async checkoutBranch(branchName: string): Promise<void> {
-    const currentBranch = (await this.repo.branch()).current
     try {
-      this.repo.checkoutBranch(branchName, currentBranch)
+      this.repo.checkout(branchName, ['--track'])
     } catch (error: unknown) {
       const err = error as Error
-      Errors.error(err)
+      CliUx.ux.error(err)
     }
   }
 

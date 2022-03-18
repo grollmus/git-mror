@@ -1,6 +1,6 @@
 import {CliUx, Command, Flags} from '@oclif/core'
 import {tmpdir} from 'node:os'
-import {join} from 'node:path'
+import {join, posix} from 'node:path'
 import path = require('node:path')
 import simpleGit from 'simple-git'
 import DestinationRepo from '../../lib/destination-repo.class'
@@ -48,22 +48,24 @@ export default class It extends Command {
       this.error('Destination is not an valid repository url.')
 
     const workingDirectories = await prepareWorkingDirectory(
-      trimedWorkingDirectory ?? path.join(tmpdir(), this.config.name),
+      trimedWorkingDirectory ?? posix.join(tmpdir(), this.config.name),
     )
 
     const sourceRepo = new SourceRepo({
       repoUrl: trimedSource,
-      workingDirectory: join(
+      workingDirectory: posix.join(
         workingDirectories.basePath,
         workingDirectories.sourceRepoDirectory,
       ),
     })
 
+    this.log("workingDirectories", workingDirectories)
+
     await sourceRepo.init(['--depth', '1', '--no-single-branch'])
 
     const destinationRepo = new DestinationRepo({
       repoUrl: trimedDestination,
-      workingDirectory: join(
+      workingDirectory: posix.join(
         workingDirectories.basePath,
         workingDirectories.destinationRepoDirectory,
       ),
@@ -80,8 +82,11 @@ export default class It extends Command {
           branch.destination
         }'`,
       )
-      sourceRepo.checkoutBranch(branch.source)
-      destinationRepo.checkoutLocalBranch(branch.destination)
+      await sourceRepo.checkoutBranch(branch.source)
+      await destinationRepo.checkoutLocalBranch(branch.destination)
+      await destinationRepo.cleanRepo()
+      this.log("destinationRepo.workingDirectory", destinationRepo.workingDirectory)
+      await sourceRepo.copyTo(destinationRepo.workingDirectory)
       CliUx.ux.action.stop('✔')
     }
   }

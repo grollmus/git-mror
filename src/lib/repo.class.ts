@@ -10,9 +10,9 @@ export default abstract class Repo {
   targetName!: string
   isCloned = false
   repo!: SimpleGit
+  workingDirectory: string
 
   private repoUrl: string
-  private workingDirectory: string
 
   constructor(args: RepoInit) {
     this.repoUrl = args.repoUrl
